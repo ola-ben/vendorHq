@@ -12,7 +12,8 @@
       "PowerShell($urls = @\\(\"http://localhost:5174/src/pages/Landing.jsx\", \"http://localhost:5174/src/pages/Inbox.jsx\", \"http://localhost:5174/src/pages/Orders.jsx\", \"http://localhost:5174/src/components/BrandIcons.jsx\"\\); foreach \\($u in $urls\\) { try { $r = Invoke-WebRequest -Uri $u -UseBasicParsing; \"OK $\\($r.StatusCode\\) $u\" } catch { \"FAIL $u - $\\($_.Exception.Message\\)\" } })",
       "PowerShell(npm install framer-motion clsx tailwind-merge)",
       "PowerShell($urls = @\\(\"http://localhost:5174/\", \"http://localhost:5174/src/App.jsx\", \"http://localhost:5174/src/pages/Landing.jsx\", \"http://localhost:5174/src/pages/Auth.jsx\", \"http://localhost:5174/src/pages/Dashboard.jsx\", \"http://localhost:5174/src/pages/Inbox.jsx\", \"http://localhost:5174/src/pages/Orders.jsx\", \"http://localhost:5174/src/pages/Automations.jsx\", \"http://localhost:5174/src/components/Layout.jsx\", \"http://localhost:5174/src/lib/cn.js\"\\); foreach \\($u in $urls\\) { try { $r = Invoke-WebRequest -Uri $u -UseBasicParsing; \"OK $\\($r.StatusCode\\) $u\" } catch { \"FAIL $u - $\\($_.Exception.Message\\)\" } })",
-      "PowerShell($urls = @\\(\"http://localhost:5174/src/components/ChatWidget.jsx\", \"http://localhost:5174/src/components/Layout.jsx\", \"http://localhost:5174/src/data/faq.js\"\\); foreach \\($u in $urls\\) { try { $r = Invoke-WebRequest -Uri $u -UseBasicParsing; \"OK $\\($r.StatusCode\\) $u\" } catch { \"FAIL $u - $\\($_.Exception.Message\\)\" } })"
+      "PowerShell($urls = @\\(\"http://localhost:5174/src/components/ChatWidget.jsx\", \"http://localhost:5174/src/components/Layout.jsx\", \"http://localhost:5174/src/data/faq.js\"\\); foreach \\($u in $urls\\) { try { $r = Invoke-WebRequest -Uri $u -UseBasicParsing; \"OK $\\($r.StatusCode\\) $u\" } catch { \"FAIL $u - $\\($_.Exception.Message\\)\" } })",
+      "WebFetch(domain:vendorhq.vercel.app)"
     ]
   }
 }

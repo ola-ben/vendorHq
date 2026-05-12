@@ -4,6 +4,8 @@ import {
   LayoutDashboard,
   Inbox,
   ShoppingBag,
+  Users,
+  Package,
   Zap,
   LogOut,
 } from 'lucide-react'
@@ -13,6 +15,8 @@ const NAV = [
   { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { to: '/inbox', label: 'Inbox', icon: Inbox },
   { to: '/orders', label: 'Orders', icon: ShoppingBag },
+  { to: '/customers', label: 'Customers', icon: Users },
+  { to: '/inventory', label: 'Inventory', icon: Package },
   { to: '/automations', label: 'Automations', icon: Zap },
 ]
 

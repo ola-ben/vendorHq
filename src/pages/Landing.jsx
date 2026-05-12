@@ -328,48 +328,100 @@ function AutomationSection() {
   )
 }
 
-const flowColor = {
-  rose: 'border-rose-200 bg-rose-50 text-rose-700',
-  indigo: 'border-indigo-200 bg-indigo-50 text-indigo-700',
-  emerald: 'border-emerald-200 bg-emerald-50 text-emerald-700',
+const stepColor = {
+  emerald: 'bg-emerald-50 text-emerald-600 ring-emerald-100',
+  violet: 'bg-violet-50 text-violet-600 ring-violet-100',
+  blue: 'bg-blue-50 text-blue-600 ring-blue-100',
+  amber: 'bg-amber-50 text-amber-600 ring-amber-100',
 }
 
 function AutomationPreview() {
   const steps = [
-    { tag: 'Trigger', color: 'rose', label: 'New WhatsApp message' },
-    { tag: 'Step 1', color: 'indigo', label: 'AI extracts order details' },
-    { tag: 'Step 2', color: 'indigo', label: 'Create order in VendorHQ' },
-    { tag: 'Step 3', color: 'indigo', label: 'Send payment instructions' },
-    { tag: 'Done', color: 'emerald', label: 'Notify vendor + log to ledger' },
+    { id: 't', icon: MessageCircle, color: 'emerald', tag: 'Trigger', title: 'New WhatsApp message', sub: 'from any customer' },
+    { id: 's1', icon: Sparkles, color: 'violet', tag: 'AI', title: 'Extract order details', sub: 'product · qty · price' },
+    { id: 's2', icon: ShoppingBag, color: 'blue', tag: 'Action', title: 'Create order in VendorHQ', sub: 'tagged as pending' },
+    { id: 's3', icon: Send, color: 'amber', tag: 'Action', title: 'Send payment instructions', sub: 'reply on the same channel' },
+    { id: 'd', icon: CheckCircle2, color: 'emerald', tag: 'Done', title: 'Notify vendor & log to ledger', sub: 'customer profile updated' },
   ]
+
   return (
-    <div className="relative rounded-2xl border border-slate-200 bg-white p-6 shadow-xl shadow-slate-900/5">
-      <div className="absolute -inset-0.5 -z-10 rounded-2xl bg-linear-to-br from-emerald-200/40 via-transparent to-indigo-200/40 blur-xl" />
-      <div className="space-y-2.5">
-        {steps.map((s, i) => (
-          <div key={s.tag}>
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.12 }}
-              className={cn('flex items-center justify-between rounded-xl border px-4 py-3 text-sm font-medium', flowColor[s.color])}
-            >
-              <span>{s.label}</span>
-              <span className="text-[10px] uppercase tracking-wider opacity-70">{s.tag}</span>
-            </motion.div>
-            {i < steps.length - 1 && (
-              <motion.div
-                initial={{ scaleY: 0 }}
-                whileInView={{ scaleY: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.12 + 0.06 }}
-                className="mx-auto h-3 w-px origin-top bg-slate-300"
-              />
-            )}
+    <div className="relative">
+      <div className="absolute -inset-6 -z-10 rounded-[2rem] bg-linear-to-br from-emerald-300/30 via-indigo-200/20 to-pink-300/20 blur-3xl" />
+      <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl shadow-slate-900/5">
+        <div className="flex items-center justify-between border-b border-slate-100 bg-linear-to-b from-slate-50 to-white px-5 py-3.5">
+          <div className="flex items-center gap-2.5">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-900 shadow-md shadow-slate-900/20">
+              <Zap className="h-4 w-4 text-emerald-400" />
+            </div>
+            <div className="leading-tight">
+              <div className="text-sm font-semibold text-slate-900">Order intake</div>
+              <div className="text-[10px] text-slate-500">5 steps · 1,247 runs this month</div>
+            </div>
           </div>
-        ))}
+          <div className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-1 text-[10px] font-medium uppercase tracking-wider text-emerald-700 ring-1 ring-inset ring-emerald-200">
+            <motion.span
+              animate={{ scale: [1, 1.4, 1], opacity: [1, 0.5, 1] }}
+              transition={{ duration: 1.6, repeat: Infinity }}
+              className="h-1.5 w-1.5 rounded-full bg-emerald-500"
+            />
+            Live
+          </div>
+        </div>
+
+        <div className="p-5">
+          {steps.map((s, i) => (
+            <div key={s.id}>
+              <FlowStep step={s} index={i} />
+              {i < steps.length - 1 && <FlowConnector index={i} />}
+            </div>
+          ))}
+        </div>
       </div>
+    </div>
+  )
+}
+
+function FlowStep({ step, index }) {
+  const { icon: Icon, color, tag, title, sub } = step
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 8 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ delay: index * 0.1, duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+      className="flex items-center gap-3 rounded-xl border border-slate-200 bg-white p-3 transition hover:border-slate-300 hover:shadow-sm"
+    >
+      <div className={cn('flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ring-1 ring-inset', stepColor[color])}>
+        <Icon className="h-4 w-4" />
+      </div>
+      <div className="min-w-0 flex-1">
+        <div className="truncate text-sm font-medium text-slate-900">{title}</div>
+        <div className="truncate text-xs text-slate-500">{sub}</div>
+      </div>
+      <span className="ml-2 shrink-0 rounded-md bg-slate-100 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider text-slate-500">
+        {tag}
+      </span>
+    </motion.div>
+  )
+}
+
+function FlowConnector({ index }) {
+  return (
+    <div className="relative my-1 ml-[27px] h-7 w-0.5">
+      <div className="absolute inset-0 border-l-2 border-dashed border-slate-200" />
+      <motion.span
+        aria-hidden
+        initial={{ y: -6, opacity: 0 }}
+        animate={{ y: [-6, 30], opacity: [0, 1, 1, 0] }}
+        transition={{
+          duration: 1.6,
+          repeat: Infinity,
+          ease: 'easeIn',
+          delay: index * 0.35,
+          times: [0, 0.15, 0.85, 1],
+        }}
+        className="absolute -left-[4px] h-2.5 w-2.5 rounded-full bg-emerald-500 shadow-lg shadow-emerald-500/40"
+      />
     </div>
   )
 }
