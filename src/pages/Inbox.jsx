@@ -1,10 +1,12 @@
 import { useState, useMemo } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Search, Send, MessageCircle, Phone } from 'lucide-react'
+import { toast } from 'sonner'
+import { Search, Send, MessageCircle, Phone, ArrowLeft } from 'lucide-react'
 import { Instagram, Facebook } from '../components/BrandIcons'
 import { getConversations, timeAgo } from '../lib/storage'
 import { CHANNELS } from '../data/vendor'
+import Tooltip from '../components/Tooltip'
 import { cn } from '../lib/cn'
 
 export default function Inbox() {
@@ -104,6 +106,7 @@ function Thread({ conversation, onBack }) {
   function send() {
     if (!draft.trim()) return
     setDraft('')
+    toast.success('Reply sent', { description: `to ${conversation.customerName}` })
   }
 
   return (
@@ -117,7 +120,15 @@ function Thread({ conversation, onBack }) {
     >
       <header className="flex items-center gap-3 border-b border-slate-200 bg-white px-5 py-3.5">
         {onBack && (
-          <button onClick={onBack} className="text-sm text-emerald-600">←</button>
+          <Tooltip label="Back to inbox">
+            <button
+              onClick={onBack}
+              aria-label="Back"
+              className="inline-flex h-9 w-9 items-center justify-center rounded-lg text-slate-500 transition hover:bg-slate-100 hover:text-slate-900"
+            >
+              <ArrowLeft className="h-4 w-4" />
+            </button>
+          </Tooltip>
         )}
         <img src={conversation.avatar} alt="" className="h-10 w-10 rounded-full object-cover ring-2 ring-white" />
         <div className="min-w-0 flex-1">
@@ -175,14 +186,17 @@ function Thread({ conversation, onBack }) {
             placeholder="Type a reply…"
             className="flex-1 resize-none rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 transition focus:border-slate-900 focus:bg-white focus:outline-none focus:ring-4 focus:ring-slate-900/5"
           />
-          <motion.button
-            whileTap={{ scale: 0.95 }}
-            onClick={send}
-            disabled={!draft.trim()}
-            className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-slate-900 text-white shadow-lg shadow-slate-900/20 transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-40"
-          >
-            <Send className="h-4 w-4" />
-          </motion.button>
+          <Tooltip label="Send (Enter)">
+            <motion.button
+              whileTap={{ scale: 0.95 }}
+              onClick={send}
+              disabled={!draft.trim()}
+              aria-label="Send message"
+              className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-slate-900 text-white shadow-lg shadow-slate-900/20 transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              <Send className="h-4 w-4" />
+            </motion.button>
+          </Tooltip>
         </div>
       </footer>
     </motion.div>

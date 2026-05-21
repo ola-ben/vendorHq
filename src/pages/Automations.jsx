@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { toast } from 'sonner'
 import {
   Zap,
   ArrowRight,
@@ -16,6 +17,7 @@ import {
   toggleAutomation,
   setAutomationWebhook,
 } from '../lib/storage'
+import Tooltip from '../components/Tooltip'
 import { cn } from '../lib/cn'
 
 const fadeUp = {
@@ -36,11 +38,16 @@ export default function Automations() {
   function handleToggle(id, enabled) {
     toggleAutomation(id, enabled)
     refresh()
+    const a = items.find((x) => x.id === id)
+    toast.success(enabled ? `Enabled · ${a?.name}` : `Paused · ${a?.name}`)
   }
 
-  function handleWebhookChange(id, url) {
+  function handleWebhookChange(id, url, opts = {}) {
     setAutomationWebhook(id, url)
     refresh()
+    if (opts.silent) return
+    if (url) toast.success('Webhook URL saved')
+    else toast('Webhook URL cleared')
   }
 
   const activeCount = items.filter((a) => a.enabled).length
@@ -190,7 +197,7 @@ function WebhookEditor({ automationId, url, onChange }) {
     if (!draft.trim()) return
     setStatus('loading')
     setResponse(null)
-    onChange(draft.trim())
+    onChange(draft.trim(), { silent: true })
 
     const payload = SAMPLE_PAYLOADS[automationId] || SAMPLE_PAYLOADS.default
     const startedAt = performance.now()
@@ -215,14 +222,21 @@ function WebhookEditor({ automationId, url, onChange }) {
         body: body.slice(0, 800),
       })
       setStatus(res.ok ? 'ok' : 'error')
+      if (res.ok) {
+        toast.success('Webhook fired', { description: `${res.status} · ${ms}ms` })
+      } else {
+        toast.error('Webhook failed', { description: `${res.status} · ${ms}ms` })
+      }
     } catch (e) {
+      const ms = Math.round(performance.now() - startedAt)
       setResponse({
         ok: false,
         status: 0,
-        ms: Math.round(performance.now() - startedAt),
+        ms,
         body: e.message || 'Network error — check the URL is reachable.',
       })
       setStatus('error')
+      toast.error('Network error', { description: 'URL unreachable. Is n8n running?' })
     }
   }
 
@@ -231,9 +245,10 @@ function WebhookEditor({ automationId, url, onChange }) {
     try {
       await navigator.clipboard.writeText(JSON.stringify(payload, null, 2))
       setCopied(true)
+      toast.success('Payload copied')
       setTimeout(() => setCopied(false), 1500)
     } catch {
-      // ignore
+      toast.error('Copy failed')
     }
   }
 

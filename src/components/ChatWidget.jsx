@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { MessageCircle, X, Send, Sparkles } from 'lucide-react'
 import { SUGGESTED, WELCOME, findAnswer } from '../data/faq'
+import Tooltip from './Tooltip'
 import { cn } from '../lib/cn'
 
 export default function ChatWidget() {
@@ -62,27 +63,29 @@ export default function ChatWidget() {
               transition={{ duration: 2.2, repeat: Infinity, ease: 'easeOut', delay: 1.1 }}
               className="absolute inset-0 rounded-full bg-emerald-500"
             />
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              animate={{
-                boxShadow: [
-                  '0 18px 36px -10px rgba(15,23,42,0.35), 0 0 0 0 rgba(16,185,129,0.6)',
-                  '0 18px 36px -10px rgba(15,23,42,0.35), 0 0 0 14px rgba(16,185,129,0)',
-                ],
-              }}
-              transition={{
-                boxShadow: { duration: 2.2, repeat: Infinity, ease: 'easeOut' },
-              }}
-              onClick={handleOpen}
-              aria-label="Open chat"
-              className="relative inline-flex h-14 w-14 items-center justify-center rounded-full bg-slate-900 text-white transition hover:bg-slate-800"
-            >
-              <MessageCircle className="h-6 w-6" />
-              {hasNew && (
-                <span className="absolute -top-0.5 -right-0.5 h-3.5 w-3.5 rounded-full border-2 border-white bg-emerald-500" />
-              )}
-            </motion.button>
+            <Tooltip label="Chat with us" side="left">
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                animate={{
+                  boxShadow: [
+                    '0 18px 36px -10px rgba(15,23,42,0.35), 0 0 0 0 rgba(16,185,129,0.6)',
+                    '0 18px 36px -10px rgba(15,23,42,0.35), 0 0 0 14px rgba(16,185,129,0)',
+                  ],
+                }}
+                transition={{
+                  boxShadow: { duration: 2.2, repeat: Infinity, ease: 'easeOut' },
+                }}
+                onClick={handleOpen}
+                aria-label="Open chat"
+                className="relative inline-flex h-14 w-14 items-center justify-center rounded-full bg-slate-900 text-white transition hover:bg-slate-800"
+              >
+                <MessageCircle className="h-6 w-6" />
+                {hasNew && (
+                  <span className="absolute -top-0.5 -right-0.5 h-3.5 w-3.5 rounded-full border-2 border-white bg-emerald-500" />
+                )}
+              </motion.button>
+            </Tooltip>
           </motion.div>
         )}
       </AnimatePresence>

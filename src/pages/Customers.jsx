@@ -1,8 +1,9 @@
 import { useState, useMemo } from 'react'
+import { Link } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Search, Phone, MessageCircle, ShoppingBag, Wallet, X } from 'lucide-react'
+import { Search, Phone, MessageCircle, ShoppingBag, Wallet, X, ArrowRight } from 'lucide-react'
 import { Instagram, Facebook } from '../components/BrandIcons'
-import { getCustomers, formatNaira, timeAgo } from '../lib/storage'
+import { getCustomers, getConversations, formatNaira, timeAgo } from '../lib/storage'
 import { cn } from '../lib/cn'
 
 const STATUS = {
@@ -255,9 +256,18 @@ function CustomerDrawer({ customer, onClose }) {
             </div>
 
             <footer className="border-t border-slate-200 p-4">
-              <button className="w-full rounded-xl bg-slate-900 px-4 py-2.5 text-sm font-medium text-white shadow-lg shadow-slate-900/15 transition hover:bg-slate-800">
-                Open conversation
-              </button>
+              {(() => {
+                const conv = getConversations().find((c) => c.customerName === customer.name)
+                return (
+                  <Link
+                    to={conv ? `/inbox?c=${conv.id}` : '/inbox'}
+                    className="group inline-flex w-full items-center justify-center gap-2 rounded-xl bg-slate-900 px-4 py-2.5 text-sm font-medium text-white shadow-lg shadow-slate-900/15 transition hover:bg-slate-800"
+                  >
+                    {conv ? 'Open conversation' : 'Send first message'}
+                    <ArrowRight className="h-4 w-4 transition group-hover:translate-x-0.5" />
+                  </Link>
+                )
+              })()}
             </footer>
           </motion.aside>
         </>
