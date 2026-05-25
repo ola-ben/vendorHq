@@ -50,7 +50,7 @@ function Hero() {
         initial="hidden"
         animate="show"
         variants={stagger}
-        className="relative mx-auto max-w-6xl px-6 pt-20 pb-24 text-center"
+        className="relative mx-auto max-w-6xl px-6 pt-4 pb-24 text-center sm:pt-14 lg:pt-6"
       >
         <motion.div variants={fadeUp} className="mb-6 inline-flex items-center gap-2 rounded-full border border-emerald-200/70 bg-white/80 px-4 py-1.5 text-sm text-emerald-700 shadow-sm backdrop-blur">
           <Sparkles className="h-3.5 w-3.5" />
