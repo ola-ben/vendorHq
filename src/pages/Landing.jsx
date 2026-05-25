@@ -89,7 +89,7 @@ function Hero() {
 
         <motion.p variants={fadeUp} className="mx-auto mt-8 max-w-2xl text-lg text-slate-600">
           VendorHQ unifies your WhatsApp, Instagram, and Facebook messages — auto-parses orders,
-          confirms payments, and chases stock. No more scattered chats. No more lost sales.
+          confirms payments, and chases stock. No more scattered chats. No more lost sales...
         </motion.p>
 
         <motion.div variants={fadeUp} className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
