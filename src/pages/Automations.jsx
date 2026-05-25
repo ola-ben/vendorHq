@@ -205,7 +205,7 @@ function WebhookEditor({ automationId, url, onChange }) {
     try {
       const res = await fetch(draft.trim(), {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'text/plain;charset=UTF-8' },
         body: JSON.stringify(payload),
       })
       const ms = Math.round(performance.now() - startedAt)
