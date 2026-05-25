@@ -228,15 +228,36 @@ function WebhookEditor({ automationId, url, onChange }) {
         toast.error('Webhook failed', { description: `${res.status} · ${ms}ms` })
       }
     } catch (e) {
-      const ms = Math.round(performance.now() - startedAt)
-      setResponse({
-        ok: false,
-        status: 0,
-        ms,
-        body: e.message || 'Network error — check the URL is reachable.',
-      })
-      setStatus('error')
-      toast.error('Network error', { description: 'URL unreachable. Is n8n running?' })
+      try {
+        await fetch(draft.trim(), {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'text/plain;charset=UTF-8' },
+          body: JSON.stringify(payload),
+        })
+        const ms = Math.round(performance.now() - startedAt)
+        setResponse({
+          ok: true,
+          opaque: true,
+          status: 0,
+          ms,
+          body: 'Request fired. Response is hidden from this browser tab because the receiver did not return CORS headers. Check the receiver to confirm the payload arrived.',
+        })
+        setStatus('ok')
+        toast.success('Webhook fired', {
+          description: 'Response opaque · check your receiver',
+        })
+      } catch (e2) {
+        const ms = Math.round(performance.now() - startedAt)
+        setResponse({
+          ok: false,
+          status: 0,
+          ms,
+          body: e2.message || e.message || 'Network error — check the URL is reachable.',
+        })
+        setStatus('error')
+        toast.error('Network error', { description: 'URL unreachable. Is n8n running?' })
+      }
     }
   }
 
@@ -324,13 +345,17 @@ function WebhookEditor({ automationId, url, onChange }) {
             exit={{ opacity: 0, y: -6 }}
             className={cn(
               'rounded-xl border p-4',
-              response.ok
-                ? 'border-emerald-200 bg-emerald-50'
-                : 'border-rose-200 bg-rose-50',
+              response.opaque
+                ? 'border-amber-200 bg-amber-50'
+                : response.ok
+                  ? 'border-emerald-200 bg-emerald-50'
+                  : 'border-rose-200 bg-rose-50',
             )}
           >
             <div className="flex items-center gap-2">
-              {response.ok ? (
+              {response.opaque ? (
+                <Send className="h-4 w-4 text-amber-700" />
+              ) : response.ok ? (
                 <Check className="h-4 w-4 text-emerald-600" />
               ) : (
                 <AlertCircle className="h-4 w-4 text-rose-600" />
@@ -338,20 +363,32 @@ function WebhookEditor({ automationId, url, onChange }) {
               <span
                 className={cn(
                   'font-medium',
-                  response.ok ? 'text-emerald-900' : 'text-rose-900',
+                  response.opaque
+                    ? 'text-amber-900'
+                    : response.ok
+                      ? 'text-emerald-900'
+                      : 'text-rose-900',
                 )}
               >
-                {response.ok
-                  ? `Success · ${response.status} · ${response.ms}ms`
-                  : response.status
-                    ? `Failed · ${response.status} · ${response.ms}ms`
-                    : `Network error · ${response.ms}ms`}
+                {response.opaque
+                  ? `Sent · response opaque · ${response.ms}ms`
+                  : response.ok
+                    ? `Success · ${response.status} · ${response.ms}ms`
+                    : response.status
+                      ? `Failed · ${response.status} · ${response.ms}ms`
+                      : `Network error · ${response.ms}ms`}
               </span>
             </div>
             {response.body && (
-              <pre className="mt-3 max-h-40 overflow-auto rounded-lg bg-white/70 p-3 font-mono text-xs text-slate-700">
-                {response.body}
-              </pre>
+              response.opaque ? (
+                <p className="mt-3 text-xs leading-relaxed text-amber-900/80">
+                  {response.body}
+                </p>
+              ) : (
+                <pre className="mt-3 max-h-40 overflow-auto rounded-lg bg-white/70 p-3 font-mono text-xs text-slate-700">
+                  {response.body}
+                </pre>
+              )
             )}
           </motion.div>
         )}
